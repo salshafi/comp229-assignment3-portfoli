@@ -1,0 +1,114 @@
+/* App.css
+   Styles for the shared header, logo and navigation bar. */
+
+.site-header {
+  border-bottom: 1px solid #3a3d45;
+  margin-bottom: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Custom logo: initials in a circle */
+.logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #5b8def;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.main-nav {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0;
+}
+
+.nav-link {
+  color: #c5c8d0;
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+}
+
+.nav-link:hover {
+  background-color: #2a2d35;
+}
+
+/* Highlights the page you're currently on */
+.nav-link.active {
+  background-color: #5b8def;
+  color: white;
+}
+/* ---------- Contact page ---------- */
+.contact-page {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Bordered panel around the contact details */
+.contact-info {
+  border: 1px solid #3a3d45;
+  border-radius: 8px;
+  padding: 12px 20px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.contact-form {
+  text-align: left;
+}
+
+/* Each label sits above its input, full width */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-field input,
+.form-field textarea {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #3a3d45;
+  background-color: #1f2128;
+  color: inherit;
+  font: inherit;
+}
+
+.form-error {
+  color: #ff6b6b;
+  margin: 0;
+  font-size: 14px;
+}
+
+.contact-form button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background-color: #5b8def;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* About page photo: square crop, centered on the face */
+img[src="/profile-photo.jpg"] {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  object-position: center 20%;
+  border-radius: 50%;
+}
