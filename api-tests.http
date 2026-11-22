@@ -3,7 +3,7 @@
 POST http://localhost:3000/auth/signin
 Content-Type: application/json
 
-{"email": "salshafi44m@gmail.com", "password": "Centennialcollege12345"}
+{"email": "salshafi44m@gmail.com", "password": "YOUR_ADMIN_PASSWORD"}
 
 ### 2. Create project with NO token (expect 401)
 POST http://localhost:3000/api/projects
@@ -54,3 +54,6 @@ Authorization: Bearer {{usersignin.response.body.token}}
 
 ### 5. Anyone can read projects (expect 200)
 GET http://localhost:3000/api/projects
+
+### Sign out (clears the cookie)
+GET http://localhost:3000/auth/signout
