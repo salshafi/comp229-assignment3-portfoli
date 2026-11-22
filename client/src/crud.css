@@ -1,0 +1,15 @@
+.auth-page { max-width: 420px; margin: 24px auto; padding: 0 16px; }
+.crud-section { margin: 32px 0; padding: 16px; border-top: 2px solid #ddd; }
+.crud-form { max-width: 520px; margin-bottom: 20px; }
+.crud-form input, .crud-form textarea { width: 100%; box-sizing: border-box; padding: 8px; }
+.record-card { border: 1px solid #ccc; border-radius: 8px; padding: 12px 16px; margin: 10px 0; }
+.record-card h3 { margin: 0 0 6px; }
+.record-card p { margin: 2px 0; }
+.btn-row { display: flex; gap: 8px; margin-top: 8px; }
+.btn-danger { background: #b00020; color: #fff; border: 0; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+.btn-edit { background: #1d4ed8; color: #fff; border: 0; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+.notice { padding: 8px 12px; border-radius: 6px; background: #eef6ff; margin: 8px 0; }
+.notice.error { background: #fdecea; color: #b00020; }
+.notice.ok { background: #e8f5e9; color: #1b5e20; }
+.user-badge { margin-left: 12px; font-weight: 600; }
+.signout-btn { margin-left: 8px; cursor: pointer; }

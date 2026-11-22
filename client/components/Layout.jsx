@@ -1,11 +1,12 @@
 // Layout.jsx
-// Shared header and navigation for every page, including a simple
-// custom logo (initials in a styled badge) per Assignment 1's
-// requirement for a custom logo. No third-party logos used.
+// Shared header and navigation. Shows Sign in / Sign up when logged out,
+// and the user's name, role and a Sign out button when logged in.
 
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import '../src/App.css';
-// Nav items kept in an array so adding a page is a one-line change
+import '../src/crud.css';
+import { useAuth } from '../src/AuthContext';
+
 const navItems = [
   { path: '/', label: 'Home' },
   { path: '/about', label: 'About' },
@@ -16,25 +17,43 @@ const navItems = [
 ];
 
 export default function Layout() {
+  const { user, signout } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleSignout() {
+    await signout();
+    navigate('/');
+  }
+
+  const linkClass = ({ isActive }) => (isActive ? 'nav-link active' : 'nav-link');
+
   return (
     <header className="site-header">
       <div className="brand">
-        {/* Custom logo: initials in a styled circle */}
         <div className="logo">SS</div>
         <h1>My Portfolio</h1>
       </div>
 
       <nav className="main-nav">
         {navItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            end={item.path === '/'} // stops Home from staying active on every page
-            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-          >
+          <NavLink key={item.path} to={item.path} end={item.path === '/'} className={linkClass}>
             {item.label}
           </NavLink>
         ))}
+
+        {!user && (
+          <>
+            <NavLink to="/signin" className={linkClass}>Sign in</NavLink>
+            <NavLink to="/signup" className={linkClass}>Sign up</NavLink>
+          </>
+        )}
+
+        {user && (
+          <>
+            <span className="user-badge">{user.name} ({user.role})</span>
+            <button className="signout-btn" onClick={handleSignout}>Sign out</button>
+          </>
+        )}
       </nav>
     </header>
   );

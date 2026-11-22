@@ -9,7 +9,8 @@ const signin = async (req, res) => {
     if (!user || !(await user.authenticate(password))) {
       return res.status(401).json({ error: 'Email and password do not match' })
     }
-    const token = jwt.sign({ _id: user._id }, config.jwtSecret, { expiresIn: '1d' })
+    // role travels inside the token so the server can check it on every request
+    const token = jwt.sign({ _id: user._id, role: user.role }, config.jwtSecret, { expiresIn: '1d' })
     res.cookie('t', token, { httpOnly: true, maxAge: 86400000 })
     return res.json({ token, user })
   } catch (err) {
@@ -22,9 +23,10 @@ const signout = (req, res) => {
   return res.json({ message: 'Signed out' })
 }
 
+// 401 = who are you? (no/invalid token)
 const requireSignin = (req, res, next) => {
   const header = req.headers.authorization || ''
-  const token = header.startsWith('Bearer ') ? header.slice(7) : req.cookies.t
+  const token = header.startsWith('Bearer ') ? header.slice(7) : req.cookies?.t
   if (!token) return res.status(401).json({ error: 'Not signed in' })
   try {
     req.auth = jwt.verify(token, config.jwtSecret)
@@ -34,11 +36,21 @@ const requireSignin = (req, res, next) => {
   }
 }
 
+// 403 = I know who you are, but you are not allowed
+const isAdmin = (req, res, next) => {
+  if (req.auth?.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required' })
+  }
+  next()
+}
+
+// owner of the record OR admin
 const hasAuthorization = (req, res, next) => {
-  if (String(req.doc._id) !== req.auth._id) {
+  const isOwner = String(req.doc._id) === req.auth._id
+  if (!isOwner && req.auth.role !== 'admin') {
     return res.status(403).json({ error: 'User is not authorized' })
   }
   next()
 }
 
-export default { signin, signout, requireSignin, hasAuthorization }
+export default { signin, signout, requireSignin, isAdmin, hasAuthorization }

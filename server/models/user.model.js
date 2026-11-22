@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema({
               match: [/.+@.+\..+/, 'Please fill a valid email address'] },
   password: { type: String, required: 'Password is required',
               minlength: [6, 'Password must be at least 6 characters'] },
+  role:     { type: String, enum: ['user', 'admin'], default: 'user' },
   created:  { type: Date, default: Date.now },
   updated:  { type: Date },
 })

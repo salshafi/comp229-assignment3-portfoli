@@ -1,14 +1,14 @@
-
-import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import MainRouter from '../MainRouter';
-const App = () => {
- return (
- <Router>
- 
- <MainRouter />
+import { AuthProvider } from './AuthContext';
 
- </Router>
- );
+const App = () => {
+  return (
+    <AuthProvider>
+      <Router>
+        <MainRouter />
+      </Router>
+    </AuthProvider>
+  );
 };
 export default App;

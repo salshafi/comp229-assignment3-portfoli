@@ -1,150 +1,56 @@
-### C1 - Contacts: POST create
-# @name createContact
-POST http://localhost:3000/api/contacts
+### 1. Admin signin (expect 200 + token, role admin)
+# @name adminSignin
+POST http://localhost:3000/auth/signin
 Content-Type: application/json
 
-{
-  "firstname": "Salman",
-  "lastname": "Shafi",
-  "email": "sal@example.com"
-}
+{"email": "salshafi44m@gmail.com", "password": "Centennialcollege12345"}
 
-### C2 - Contacts: GET all
-GET http://localhost:3000/api/contacts
-
-### C3 - Contacts: GET by id
-GET http://localhost:3000/api/contacts/{{createContact.response.body._id}}
-
-### C4 - Contacts: PUT by id
-PUT http://localhost:3000/api/contacts/{{createContact.response.body._id}}
-Content-Type: application/json
-
-{
-  "lastname": "Shafi Updated"
-}
-
-### C5 - Contacts: DELETE by id
-DELETE http://localhost:3000/api/contacts/{{createContact.response.body._id}}
-
-### C6 - Contacts: DELETE all
-DELETE http://localhost:3000/api/contacts
-
-### P1 - Projects: POST create
-# @name createProject
+### 2. Create project with NO token (expect 401)
 POST http://localhost:3000/api/projects
 Content-Type: application/json
 
+{"title": "Test", "description": "Test"}
+
+### 3. Create project with ADMIN token (expect 201)
+POST http://localhost:3000/api/projects
+Content-Type: application/json
+Authorization: Bearer {{adminSignin.response.body.token}}
+
 {
-  "title": "Portfolio Site",
+  "title": "Admin Test Project",
   "firstname": "Salman",
   "lastname": "Shafi",
   "email": "sal@example.com",
   "completion": "2026-10-01",
-  "description": "My React portfolio"
+  "description": "Created by admin"
 }
 
-### P2 - Projects: GET all
-GET http://localhost:3000/api/projects
-
-### P3 - Projects: GET by id
-GET http://localhost:3000/api/projects/{{createProject.response.body._id}}
-
-### P4 - Projects: PUT by id
-PUT http://localhost:3000/api/projects/{{createProject.response.body._id}}
-Content-Type: application/json
-
-{
-  "description": "Updated description"
-}
-
-### P5 - Projects: DELETE by id
-DELETE http://localhost:3000/api/projects/{{createProject.response.body._id}}
-
-### P6 - Projects: DELETE all
-DELETE http://localhost:3000/api/projects
-
-### Q1 - Qualifications: POST create
-# @name createQual
-POST http://localhost:3000/api/qualifications
-Content-Type: application/json
-
-{
-  "title": "Software Engineering Technology - AI",
-  "firstname": "Salman",
-  "lastname": "Shafi",
-  "email": "sal@example.com",
-  "completion": "2028-04-30",
-  "description": "Centennial College diploma"
-}
-
-### Q2 - Qualifications: GET all
-GET http://localhost:3000/api/qualifications
-
-### Q3 - Qualifications: GET by id
-GET http://localhost:3000/api/qualifications/{{createQual.response.body._id}}
-
-### Q4 - Qualifications: PUT by id
-PUT http://localhost:3000/api/qualifications/{{createQual.response.body._id}}
-Content-Type: application/json
-
-{
-  "description": "Updated description"
-}
-
-### Q5 - Qualifications: DELETE by id
-DELETE http://localhost:3000/api/qualifications/{{createQual.response.body._id}}
-
-### Q6 - Qualifications: DELETE all
-DELETE http://localhost:3000/api/qualifications
-
-### U1 - Users: POST register
-# @name createUser
+### 4a. Signup a normal user (expect 201)
 POST http://localhost:3000/api/users
 Content-Type: application/json
 
-{
-  "name": "Salman Shafi",
-  "email": "salman.test@example.com",
-  "password": "Test1234"
-}
+{"name": "Test User", "email": "user@test.com", "password": "test1234"}
 
-### U2 - Auth: POST sign in
-# @name signin
+### 4b. Normal user signin
+# @name usersignin
 POST http://localhost:3000/auth/signin
 Content-Type: application/json
 
-{
-  "email": "salman.test@example.com",
-  "password": "Test1234"
-}
+{"email": "user@test.com", "password": "test1234"}
 
-### U3 - Users: GET all WITHOUT token (expect 401)
-GET http://localhost:3000/api/users
-
-### U4 - Users: GET all WITH token
-GET http://localhost:3000/api/users
-Authorization: Bearer {{signin.response.body.token}}
-
-### U5 - Users: GET by id
-GET http://localhost:3000/api/users/{{createUser.response.body._id}}
-Authorization: Bearer {{signin.response.body.token}}
-
-### U6 - Users: PUT by id
-PUT http://localhost:3000/api/users/{{createUser.response.body._id}}
+### 4c. Create project as NORMAL user (expect 403)
+POST http://localhost:3000/api/projects
 Content-Type: application/json
-Authorization: Bearer {{signin.response.body.token}}
+Authorization: Bearer {{usersignin.response.body.token}}
 
 {
-  "name": "Salman Shafi Updated"
+  "title": "Normal User Project",
+  "firstname": "Test",
+  "lastname": "User",
+  "email": "user@test.com",
+  "completion": "2026-10-01",
+  "description": "Should be blocked"
 }
 
-### U7 - Users: DELETE by id
-DELETE http://localhost:3000/api/users/{{createUser.response.body._id}}
-Authorization: Bearer {{signin.response.body.token}}
-
-### U8 - Users: DELETE all
-DELETE http://localhost:3000/api/users
-Authorization: Bearer {{signin.response.body.token}}
-
-### U9 - Auth: GET sign out
-GET http://localhost:3000/auth/signout
+### 5. Anyone can read projects (expect 200)
+GET http://localhost:3000/api/projects

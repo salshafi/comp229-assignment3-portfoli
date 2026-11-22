@@ -1,3 +1,14 @@
+import CrudPage from './CrudPage'
+
+const fields = [
+  { name: 'title', label: 'Title', required: true },
+  { name: 'firstname', label: 'First name', required: true },
+  { name: 'lastname', label: 'Last name', required: true },
+  { name: 'email', label: 'Email', type: 'email', required: true },
+  { name: 'completion', label: 'Completion date', type: 'date' },
+  { name: 'description', label: 'Description', type: 'textarea' },
+]
+
 export default function Education() {
   return (
     <div>
@@ -21,6 +32,7 @@ export default function Education() {
         Unix/Linux Operating Systems, Client-Side Web Development (JavaScript,
         HTML/CSS), Python Programming, Discrete Math &amp; Intro Calculus
       </p>
+          <CrudPage title="Education records" endpoint="/api/qualifications" fields={fields} />
     </div>
   );
 }

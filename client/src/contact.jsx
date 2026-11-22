@@ -1,17 +1,20 @@
 // contact.jsx
-// This component renders the "Contact" page of the portfolio site.
-// It collects visitor info through a controlled form, following the
-// React Forms pattern from the COMP229 Week 2 lecture, and redirects
-// to Home on submit (no backend yet — that comes in Assignment 2+).
+// Contact form (controlled, with validation) that now SAVES to the backend,
+// plus a list of saved messages: signed-in users can view, admin can edit/delete.
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { request } from './api';
+import CrudPage from './CrudPage';
+
+const listFields = [
+  { name: 'firstname', label: 'First name', required: true },
+  { name: 'lastname', label: 'Last name', required: true },
+  { name: 'email', label: 'Email', type: 'email', required: true },
+  { name: 'phone', label: 'Phone' },
+  { name: 'message', label: 'Message', type: 'textarea' },
+];
 
 export default function Contact() {
-  const navigate = useNavigate();
-
-  // Controlled form state — one object holding all field values,
-  // so adding a new field later only means adding one key here
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -19,28 +22,22 @@ export default function Contact() {
     email: '',
     message: '',
   });
-
-  // Tracks validation error messages per field
   const [errors, setErrors] = useState({});
+  const [status, setStatus] = useState({ type: '', text: '' });
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  // Updates formData whenever any input changes
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-    // Clear this specific field's error the moment the user starts fixing it,
-  // instead of making them wait until they resubmit the whole form
-  if (errors[name]) {
-    setErrors((prev) => {
-      const updated = { ...prev };
-      delete updated[name];
-      return updated;
-    });
+    if (errors[name]) {
+      setErrors((prev) => {
+        const updated = { ...prev };
+        delete updated[name];
+        return updated;
+      });
+    }
   }
-}
- 
 
-  // Basic validation — checks required fields and a simple email pattern
   function validate() {
     const newErrors = {};
     if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
@@ -53,111 +50,95 @@ export default function Contact() {
     if (!formData.message.trim()) newErrors.message = 'Message is required';
     return newErrors;
   }
-    function handleSubmit(e) {
-  e.preventDefault();
-  const validationErrors = validate();
 
-  if (Object.keys(validationErrors).length > 0) {
-    // Stop here and show errors instead of submitting
-    setErrors(validationErrors);
-    return;
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
+
+    try {
+      // Backend field names are lowercase (firstname / lastname)
+      await request('/api/contacts', {
+        method: 'POST',
+        body: {
+          firstname: formData.firstName.trim(),
+          lastname: formData.lastName.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          message: formData.message.trim(),
+        },
+      });
+      setStatus({ type: 'ok', text: 'Thanks for reaching out! Your message was saved.' });
+      setFormData({ firstName: '', lastName: '', phone: '', email: '', message: '' });
+      setRefreshKey((k) => k + 1);
+    } catch (err) {
+      setStatus({ type: 'error', text: err.message });
+    }
   }
 
-  // Clear any leftover errors from a previous failed attempt
-  setErrors({});
-
-  // No backend yet, so we just confirm and redirect to Home —
-  // this will be replaced with a real API call in Assignment 2
-  alert('Thanks for reaching out! Redirecting you to Home.');
-  navigate('/');
-}
- 
-
   return (
-  
     <div className="contact-page">
       <h2>Contact</h2>
 
-      {/* Contact info panel (rubric 1i) */}
       <div className="contact-info">
         <p>
           Email: <a href="mailto:salshafi44@gmail.com">salshafi44@gmail.com</a>
         </p>
         <p>
           LinkedIn:{' '}
-          <a
-            href="https://linkedin.com/in/salmanshafi44"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://linkedin.com/in/salmanshafi44" target="_blank" rel="noopener noreferrer">
             linkedin.com/in/salmanshafi44
           </a>
         </p>
       </div>
 
-      {/* noValidate lets our own error messages show instead of the browser's */}
+      {status.text && <p className={`notice ${status.type}`}>{status.text}</p>}
+
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
         <div className="form-field">
           <label htmlFor="firstName">First Name</label>
-          <input
-            id="firstName"
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-          />
+          <input id="firstName" type="text" name="firstName" value={formData.firstName} onChange={handleChange} />
           {errors.firstName && <p className="form-error">{errors.firstName}</p>}
         </div>
 
         <div className="form-field">
           <label htmlFor="lastName">Last Name</label>
-          <input
-            id="lastName"
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-          />
+          <input id="lastName" type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
           {errors.lastName && <p className="form-error">{errors.lastName}</p>}
         </div>
 
         <div className="form-field">
           <label htmlFor="phone">Phone</label>
-          <input
-            id="phone"
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-          />
+          <input id="phone" type="tel" name="phone" value={formData.phone} onChange={handleChange} />
         </div>
 
         <div className="form-field">
           <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
+          <input id="email" type="email" name="email" value={formData.email} onChange={handleChange} />
           {errors.email && <p className="form-error">{errors.email}</p>}
         </div>
 
         <div className="form-field">
           <label htmlFor="message">Message</label>
-          <textarea
-            id="message"
-            name="message"
-            rows="5"
-            value={formData.message}
-            onChange={handleChange}
-          />
+          <textarea id="message" name="message" rows="5" value={formData.message} onChange={handleChange} />
           {errors.message && <p className="form-error">{errors.message}</p>}
         </div>
 
         <button type="submit">Send</button>
       </form>
+
+      <CrudPage
+        title="Saved messages"
+        endpoint="/api/contacts"
+        fields={listFields}
+        requireSignin
+        allowCreate={false}
+        refreshKey={refreshKey}
+      />
     </div>
   );
 }

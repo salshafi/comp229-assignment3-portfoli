@@ -1,3 +1,14 @@
+import CrudPage from './CrudPage'
+
+const fields = [
+  { name: 'title', label: 'Title', required: true },
+  { name: 'firstname', label: 'First name', required: true },
+  { name: 'lastname', label: 'Last name', required: true },
+  { name: 'email', label: 'Email', type: 'email', required: true },
+  { name: 'completion', label: 'Completion date', type: 'date' },
+  { name: 'description', label: 'Description', type: 'textarea' },
+]
+
 // project.jsx
 // This component renders the "Projects" page of the portfolio site.
 // It showcases real, verifiable work — each project links to its
@@ -54,6 +65,7 @@ export default function Project() {
           View on GitHub
         </a>
       </div>
+          <CrudPage title="Project records" endpoint="/api/projects" fields={fields} />
     </div>
   );
 }
