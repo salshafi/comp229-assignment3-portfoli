@@ -1,6 +1,5 @@
 // One place for every call to the backend (API consumption).
-export const API = 'http://localhost:3000'
-
+export const API = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 export async function request(path, { method = 'GET', body, token } = {}) {
   const headers = {}
   if (body) headers['Content-Type'] = 'application/json'
